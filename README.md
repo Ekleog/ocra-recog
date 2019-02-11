@@ -8,9 +8,22 @@ and [there](http://www.danvk.org/2015/01/11/training-an-ocropus-ocr-model.html).
 
 # Steps for generating your own recognizer for a known font for use with ocropus
 
-1. Generate some text using the chars you want (in my case, a hexdump-like format):
-   `cat /dev/urandom | hexdump | sed 's/ /: /' | head -c 100000 > train.txt'
-2. Generate the training data:
-   `ocropus-linegen -t train.txt -f OCR-A.ttf`
+1. Generate some text using the chars you want (in my case, a hexdump-like
+   format, for paperkey):
+   `cat /dev/urandom | hexdump -e '"%_ad:" 22/1 " %02X" " " 3/1 "%02X" "\n"' | head -n 1000 | sed 's/^\([0-9][0-9][0-9]\).*:/\1:/' > train.txt`
+2. Generate the training data (here with high degradations as it's so
+   restricted):
+   `ocropus-linegen -t train.txt -e hi -f OCR-A.ttf`
 3. Generate the model:
    `ocropus-rtrain -o model linegen/*/*.png`
+
+# Steps for using your own recognizer with ocropus
+
+1. Binarize:
+   `ocropus-nlbin input.jpg -o input`
+2. Segment interesting parts:
+   `ocropus-gpageseg input/*.bin.png`
+3. Perform recognition:
+   `ocropus-rpred -m model-SOMETHING.pyrnn.gz input/*/*.bin.png`
+4. Put everything together:
+   `ocropus-hocr input/*.bin.png -o result.html`
