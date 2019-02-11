@@ -24,6 +24,6 @@ and [there](http://www.danvk.org/2015/01/11/training-an-ocropus-ocr-model.html).
 2. Segment interesting parts:
    `ocropus-gpageseg input/*.bin.png`
 3. Perform recognition:
-   `ocropus-rpred -m model-SOMETHING.pyrnn.gz input/*/*.bin.png`
+   `ocropus-rpred -n -m model-SOMETHING.pyrnn.gz input/*/*.bin.png`
 4. Put everything together:
    `ocropus-hocr input/*.bin.png -o result.html`
